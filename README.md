@@ -14,7 +14,7 @@
 **A complete full-stack application for user registration, listing, filtering and deletion.**  
 Built with a modern JavaScript stack focused on clean architecture and frontend-backend integration.
 
-> ⚠️ **Note:** The source code, comments and variable names are written in **Portuguese (pt-BR)**, as this project was developed for study purposes in a Brazilian context.
+> ⚠️ **Note:** The source code, comments and variable names are written in **Portuguese (pt-BR)**, as this project was developed for study purposes in a Brazilian/Portuguese context.
 
 [Features](#-features) • [Tech Stack](#-tech-stack) • [Getting Started](#-getting-started) • [API Reference](#-api-reference) • [Project Structure](#-project-structure)
 
