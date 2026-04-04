@@ -83,10 +83,14 @@ function Home() {
   return (
     <div className="container">
 
-      {/* BOTÃO PARA A PÁGINA DA FOTO — AGORA FORA DO FORM */}
       <div className="foto-btn-wrapper">
-        <a href="/foto">
-          <button type="button" className="btn-foto">Ver Foto do Peixoto</button>
+        <a href="/foto" className="btn-foto">
+          <span className="btn-foto-icon"></span>
+          <span className="btn-foto-text">
+            <span className="btn-foto-label">Galeria</span>
+            <span className="btn-foto-sub">Ver foto do Peixoto</span>
+          </span>
+          <span className="btn-foto-arrow">→</span>
         </a>
       </div>
 
@@ -128,7 +132,7 @@ function Home() {
                 type="email"
               />
               <div className="edit-buttons">
-                <button type="submit">💾 Salvar</button>
+                <button type="submit"> Salvar</button>
                 <button type="button" onClick={() => setUserEdit(null)}>✖ Cancelar</button>
               </div>
             </form>
@@ -142,7 +146,7 @@ function Home() {
 
           {userEdit?.id !== user.id && (
             <div className="card-buttons">
-              <button onClick={() => setUserEdit(user)}>✏️ Editar</button>
+              <button onClick={() => setUserEdit(user)}> Editar</button>
               <button onClick={() => deleteUser(user.id)}>
                 <img src={Lixo} alt="Excluir" style={{ width: '20px' }} />
               </button>
