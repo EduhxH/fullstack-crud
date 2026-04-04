@@ -10,7 +10,7 @@ export default function Foto() {
 
   async function carregarComentarios() {
     try {
-      const res = await fetch("http://localhost:3000/comentarios");
+      const res = await fetch("https://fullstack-crud-foud.onrender.com/comentarios");
       if (!res.ok) throw new Error("Erro ao carregar comentários");
       const data = await res.json();
       setComentarios(data);
@@ -28,7 +28,7 @@ export default function Foto() {
     setErro("");
 
     try {
-      const res = await fetch("http://localhost:3000/comentarios", {
+      const res = await fetch("https://fullstack-crud-foud.onrender.com/comentarios", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ texto }),
