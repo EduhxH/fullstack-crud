@@ -56,6 +56,18 @@ function authMiddleware(req, res, next) {
   }
 }
 
+// ── Health check para testar conexão ─────────────────────────
+app.get('/health', async (req, res) => {
+  try {
+    // Testa conexão com o banco
+    await prisma.$queryRaw`SELECT 1`;
+    res.status(200).json({ status: 'ok', message: 'Banco de dados conectado' });
+  } catch (error) {
+    console.error('Database connection error:', error);
+    res.status(503).json({ status: 'error', message: 'Banco de dados desconectado', error: error.message });
+  }
+});
+
 // ── Rotas públicas (sem login) ────────────────────────────────
 
 // Registar admin
