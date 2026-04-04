@@ -24,9 +24,6 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-// Middleware para OPTIONS preflight
-app.options('*', cors());
-
 app.use(express.json());
 
 const JWT_SECRET = process.env.JWT_SECRET || "segredo_dev"; // usa variável de ambiente
