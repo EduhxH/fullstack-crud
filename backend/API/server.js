@@ -6,9 +6,6 @@ import { z } from 'zod';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 
-// LOG TEMPORÁRIO - remover depois
-console.log("DATABASE_URL:", process.env.DATABASE_URL);
-
 const prisma = new PrismaClient({
   datasources: {
     db: {
