@@ -13,13 +13,20 @@ const app = express();
 const allowedOrigins = [
   'http://localhost:5174',
   'http://localhost:3000',
+  'https://fullstack-crud-pearl.vercel.app',
   process.env.FRONTEND_URL || 'http://localhost:5174'
 ];
 
 app.use(cors({
   origin: allowedOrigins,
-  credentials: true
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
+
+// Middleware para OPTIONS preflight
+app.options('*', cors());
+
 app.use(express.json());
 
 const JWT_SECRET = process.env.JWT_SECRET || "segredo_dev"; // usa variável de ambiente
