@@ -50,8 +50,8 @@ export default function Foto() {
 
       {/* ── COLUNA ESQUERDA: FOTO ── */}
       <div className="foto-col-left">
-        <a href="/home" className="btn-voltar">← Voltar</a>
-        <span className="foto-label">📸 Galeria</span>
+        <a href="https://fullstack-crud-pearl.vercel.app/" className="btn-voltar">← Voltar</a>
+        <span className="foto-label"> Galeria</span>
         <div className="foto-wrapper">
           <img src={peixoto} className="foto" alt="Peixoto" />
           <div className="foto-overlay" />
