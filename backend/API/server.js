@@ -1,17 +1,23 @@
-import express from 'express';
 import "dotenv/config";
+import express from 'express';
 import { PrismaClient } from "@prisma/client";
 import cors from 'cors';
 import { z } from 'zod';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 
-const prisma = new PrismaClient();
-const app = express();
+const prisma = new PrismaClient({
+  datasources: {
+    db: {
+      url: process.env.DATABASE_URL
+    }
+  }
+});
 
 const JWT_SECRET = process.env.JWT_SECRET || "segredo_dev";
 const PORT = process.env.PORT || 3000;
 
+const app = express();
 app.use(cors({
   origin: true,
   credentials: true
