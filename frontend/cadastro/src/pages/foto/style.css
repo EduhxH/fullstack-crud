@@ -1,0 +1,61 @@
+.foto-page {
+  display: flex;
+  gap: 40px;
+  padding: 40px;
+  align-items: flex-start;
+}
+
+.foto-container {
+  flex: 1;
+}
+
+.foto {
+  width: 100%;
+  max-width: 450px;
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.4);
+}
+
+.comentarios-container {
+  flex: 1;
+  background: rgba(255,255,255,0.1);
+  padding: 20px;
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+}
+
+.lista-comentarios {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 400px;
+  overflow-y: auto;
+  margin-bottom: 20px;
+}
+
+.comentario {
+  background: rgba(255,255,255,0.15);
+  padding: 10px 15px;
+  border-radius: 10px;
+}
+
+.form-comentario {
+  display: flex;
+  gap: 10px;
+}
+
+.form-comentario input {
+  flex: 1;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+}
+
+.form-comentario button {
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  background: #8a81f1;
+  color: white;
+  cursor: pointer;
+}

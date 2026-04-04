@@ -7,6 +7,28 @@
   min-height: 100vh;
 }
 
+.foto-btn-wrapper {
+  width: 420px;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.btn-foto {
+  margin-bottom: 10px;
+  padding: 10px 18px;
+  background: #8a81f1;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+  font-size: 15px;
+  transition: 0.2s;
+}
+
+.btn-foto:hover {
+  background: #6d63e6;
+}
+
 form {
   display: flex;
   flex-direction: column;
@@ -104,14 +126,8 @@ form button:active {
   font-family: 'DM Sans', sans-serif;
 }
 
-.card p strong {
-  color: rgba(255,255,255,0.85);
-  font-weight: 500;
-}
-
 .card span {
   color: #ccc;
-  font-weight: 400;
 }
 
 .card button {
@@ -143,15 +159,6 @@ form button:active {
   flex: 1;
 }
 
-.edit-form input {
-  padding: 6px 10px;
-  border-radius: 6px;
-  border: 1px solid #555;
-  background: #2a2a2a;
-  color: white;
-  font-size: 14px;
-}
-
 .edit-buttons {
   display: flex;
   gap: 8px;
@@ -164,12 +171,14 @@ form button:active {
   gap: 8px;
   align-items: center;
 }
+
 .error {
   color: #ff6b6b;
   font-size: 12px;
   margin-top: -4px;
   margin-bottom: 4px;
 }
+
 .top-bar {
   display: flex;
   justify-content: flex-end;

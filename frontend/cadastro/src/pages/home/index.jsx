@@ -4,6 +4,12 @@ import api from '../../services/api';
 import { useEffect, useState, useRef } from 'react';
 
 function Home() {
+
+  function logout() {
+    localStorage.removeItem('token');
+    window.location.href = '/login';
+  }
+
   const [errors, setErrors] = useState({});
   const [users, setUsers] = useState([]);
   const [userEdit, setUserEdit] = useState(null);
@@ -72,10 +78,18 @@ function Home() {
 
   useEffect(() => {
     getUsers();
-  }, [page]); // re-busca sempre que a página mudar
+  }, [page]);
 
   return (
     <div className="container">
+
+      {/* BOTÃO PARA A PÁGINA DA FOTO — AGORA FORA DO FORM */}
+      <div className="foto-btn-wrapper">
+        <a href="/foto">
+          <button type="button" className="btn-foto">Ver Foto do Peixoto</button>
+        </a>
+      </div>
+
       <form onSubmit={createUser}>
         <h1>Cadastro de Usuários</h1>
 
@@ -137,7 +151,6 @@ function Home() {
         </div>
       ))}
 
-      {/* Paginação — só aparece se houver mais de 1 página */}
       {totalPages > 1 && (
         <div className="pagination">
           <button onClick={() => setPage(p => p - 1)} disabled={page === 1}>
@@ -149,6 +162,10 @@ function Home() {
           </button>
         </div>
       )}
+
+      <div className="top-bar">
+        <button onClick={logout} className="logout-btn">Sair →</button>
+      </div>
 
     </div>
   );
