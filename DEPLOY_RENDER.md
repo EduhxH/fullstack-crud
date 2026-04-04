@@ -11,7 +11,7 @@
 ## 1️⃣ Criar Banco de Dados PostgreSQL no Render
 
 1. Acesse [https://dashboard.render.com](https://dashboard.render.com)
-2. Clique em **"New"** → **"PostgreSQL"**
+2. Clique em **"New"** → **"Postgres"**
 3. Preencha os dados:
    - **Name**: `cadastro-db` (ou o nome que preferir)
    - **Database**: `cadastro` 

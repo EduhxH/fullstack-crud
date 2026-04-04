@@ -1,7 +1,8 @@
 import axios from 'axios';
 
+const API_BASE_URL = 'https://fullstack-crud-foud.onrender.com';
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000'
+  baseURL: API_BASE_URL
 });
 
 api.interceptors.request.use((config) => {
