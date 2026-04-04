@@ -12,7 +12,6 @@ const app = express();
 const JWT_SECRET = process.env.JWT_SECRET || "segredo_dev";
 const PORT = process.env.PORT || 3000;
 
-// Configurar CORS
 app.use(cors({
   origin: true,
   credentials: true
@@ -20,7 +19,6 @@ app.use(cors({
 
 app.use(express.json());
 
-// ── Schemas de validação ──────────────────────────────────────
 const userSchema = z.object({
   name: z.string().min(2, "Nome deve ter pelo menos 2 caracteres").max(100),
   age: z.string().regex(/^\d+$/, "Idade deve ser um número inteiro positivo")
@@ -33,26 +31,22 @@ const authSchema = z.object({
   password: z.string().min(6, "Password deve ter pelo menos 6 caracteres")
 });
 
-// ── Middleware de autenticação ────────────────────────────────
 function authMiddleware(req, res, next) {
-  const token = req.headers.authorization?.split(' ')[1]; // "Bearer <token>"
+  const token = req.headers.authorization?.split(' ')[1]; 
   if (!token) {
     return res.status(401).json({ error: "Token não fornecido" });
   }
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
     req.adminId = decoded.id;
-    next(); // token válido — continua para a rota
+    next(); 
   } catch {
     return res.status(401).json({ error: "Token inválido ou expirado" });
   }
 }
-
-// ── Health check para testar conexão ─────────────────────────
 app.get('/health', async (req, res) => {
   try {
-    // Testa conexão com o banco
-    await prisma.$queryRaw`SELECT 1`;
+    await prisma.$runCommandRaw({ ping: 1 });
     res.status(200).json({ status: 'ok', message: 'Banco de dados conectado' });
   } catch (error) {
     console.error('Database connection error:', error);
@@ -60,9 +54,6 @@ app.get('/health', async (req, res) => {
   }
 });
 
-// ── Rotas públicas (sem login) ────────────────────────────────
-
-// Registar admin
 app.post('/auth/register', async (req, res) => {
   const result = authSchema.safeParse(req.body);
   if (!result.success) {
@@ -101,8 +92,6 @@ app.post('/auth/login', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
-
-// ── Rotas protegidas (precisam de token) ─────────────────────
 
 app.get('/usuarios', authMiddleware, async (req, res) => {
   try {
