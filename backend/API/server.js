@@ -1,6 +1,6 @@
 import express from 'express';
 import "dotenv/config";
-import { PrismaClient } from "./generated/prisma/index.js";
+import { PrismaClient } from "@prisma/client";
 import cors from 'cors';
 import { z } from 'zod';
 import jwt from 'jsonwebtoken';
