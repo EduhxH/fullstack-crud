@@ -19,3 +19,9 @@ model Admin {
   email    String @unique
   password String
 }
+
+model Comentario {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  texto     String
+  createdAt DateTime @default(now())
+}

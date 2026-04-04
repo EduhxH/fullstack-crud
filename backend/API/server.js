@@ -1,16 +1,14 @@
 import "dotenv/config";
-import express from 'express';
+import express from "express";
 import { PrismaClient } from "@prisma/client";
-import cors from 'cors';
-import { z } from 'zod';
-import jwt from 'jsonwebtoken';
-import bcrypt from 'bcryptjs';
+import cors from "cors";
+import { z } from "zod";
+import jwt from "jsonwebtoken";
+import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient({
   datasources: {
-    db: {
-      url: process.env.DATABASE_URL
-    }
+    db: { url: process.env.DATABASE_URL }
   }
 });
 
@@ -18,53 +16,49 @@ const JWT_SECRET = process.env.JWT_SECRET || "segredo_dev";
 const PORT = process.env.PORT || 3000;
 
 const app = express();
-app.use(cors({
-  origin: true,
-  credentials: true
-}));
-
+app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
 
 const userSchema = z.object({
-  name: z.string().min(2, "Nome deve ter pelo menos 2 caracteres").max(100),
-  age: z.string().regex(/^\d+$/, "Idade deve ser um número inteiro positivo")
-        .refine(val => parseInt(val) <= 120, "Idade inválida"),
-  email: z.string().email("Email inválido")
+  name: z.string().min(2).max(100),
+  age: z.string().regex(/^\d+$/).refine(v => parseInt(v) <= 120),
+  email: z.string().email()
 });
 
 const authSchema = z.object({
-  email: z.string().email("Email inválido"),
-  password: z.string().min(6, "Password deve ter pelo menos 6 caracteres")
+  email: z.string().email(),
+  password: z.string().min(6)
+});
+
+const comentarioSchema = z.object({
+  texto: z.string().min(1)
 });
 
 function authMiddleware(req, res, next) {
-  const token = req.headers.authorization?.split(' ')[1]; 
-  if (!token) {
-    return res.status(401).json({ error: "Token não fornecido" });
-  }
+  const token = req.headers.authorization?.split(" ")[1];
+  if (!token) return res.status(401).json({ error: "Token não fornecido" });
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
     req.adminId = decoded.id;
-    next(); 
+    next();
   } catch {
     return res.status(401).json({ error: "Token inválido ou expirado" });
   }
 }
-app.get('/health', async (req, res) => {
+
+app.get("/health", async (req, res) => {
   try {
     await prisma.$runCommandRaw({ ping: 1 });
-    res.status(200).json({ status: 'ok', message: 'Banco de dados conectado' });
+    res.status(200).json({ status: "ok" });
   } catch (error) {
-    console.error('Database connection error:', error);
-    res.status(503).json({ status: 'error', message: 'Banco de dados desconectado', error: error.message });
+    res.status(503).json({ status: "error", error: error.message });
   }
 });
 
-app.post('/auth/register', async (req, res) => {
+app.post("/auth/register", async (req, res) => {
   const result = authSchema.safeParse(req.body);
-  if (!result.success) {
-    return res.status(400).json({ errors: result.error.flatten().fieldErrors });
-  }
+  if (!result.success) return res.status(400).json({ errors: result.error.flatten().fieldErrors });
+
   try {
     const exists = await prisma.admin.findUnique({ where: { email: result.data.email } });
     if (exists) return res.status(400).json({ error: "Email já registado" });
@@ -73,18 +67,17 @@ app.post('/auth/register', async (req, res) => {
     const admin = await prisma.admin.create({
       data: { email: result.data.email, password: hashedPassword }
     });
-    res.status(201).json({ message: "Admin criado com sucesso", id: admin.id });
+
+    res.status(201).json({ id: admin.id });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
-// Login
-app.post('/auth/login', async (req, res) => {
+app.post("/auth/login", async (req, res) => {
   const result = authSchema.safeParse(req.body);
-  if (!result.success) {
-    return res.status(400).json({ errors: result.error.flatten().fieldErrors });
-  }
+  if (!result.success) return res.status(400).json({ errors: result.error.flatten().fieldErrors });
+
   try {
     const admin = await prisma.admin.findUnique({ where: { email: result.data.email } });
     if (!admin) return res.status(401).json({ error: "Credenciais inválidas" });
@@ -92,14 +85,14 @@ app.post('/auth/login', async (req, res) => {
     const validPassword = await bcrypt.compare(result.data.password, admin.password);
     if (!validPassword) return res.status(401).json({ error: "Credenciais inválidas" });
 
-    const token = jwt.sign({ id: admin.id }, JWT_SECRET, { expiresIn: '8h' });
+    const token = jwt.sign({ id: admin.id }, JWT_SECRET, { expiresIn: "8h" });
     res.status(200).json({ token });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
-app.get('/usuarios', authMiddleware, async (req, res) => {
+app.get("/usuarios", authMiddleware, async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 5;
@@ -107,7 +100,11 @@ app.get('/usuarios', authMiddleware, async (req, res) => {
 
     let where = {};
     if (req.query.name || req.query.age || req.query.email) {
-      where = { name: req.query.name, age: req.query.age, email: req.query.email };
+      where = {
+        ...(req.query.name && { name: req.query.name }),
+        ...(req.query.age && { age: req.query.age }),
+        ...(req.query.email && { email: req.query.email })
+      };
     }
 
     const [users, total] = await Promise.all([
@@ -121,11 +118,10 @@ app.get('/usuarios', authMiddleware, async (req, res) => {
   }
 });
 
-app.post('/usuarios', authMiddleware, async (req, res) => {
+app.post("/usuarios", authMiddleware, async (req, res) => {
   const result = userSchema.safeParse(req.body);
-  if (!result.success) {
-    return res.status(400).json({ errors: result.error.flatten().fieldErrors });
-  }
+  if (!result.success) return res.status(400).json({ errors: result.error.flatten().fieldErrors });
+
   try {
     const user = await prisma.user.create({ data: result.data });
     res.status(201).json(user);
@@ -134,11 +130,10 @@ app.post('/usuarios', authMiddleware, async (req, res) => {
   }
 });
 
-app.put('/usuarios/:id', authMiddleware, async (req, res) => {
+app.put("/usuarios/:id", authMiddleware, async (req, res) => {
   const result = userSchema.safeParse(req.body);
-  if (!result.success) {
-    return res.status(400).json({ errors: result.error.flatten().fieldErrors });
-  }
+  if (!result.success) return res.status(400).json({ errors: result.error.flatten().fieldErrors });
+
   try {
     const user = await prisma.user.update({
       where: { id: req.params.id },
@@ -150,12 +145,37 @@ app.put('/usuarios/:id', authMiddleware, async (req, res) => {
   }
 });
 
-app.delete('/usuarios/:id', authMiddleware, async (req, res) => {
+app.delete("/usuarios/:id", authMiddleware, async (req, res) => {
   try {
     await prisma.user.delete({ where: { id: req.params.id } });
-    res.status(200).json({ message: 'Usuário deletado com sucesso' });
+    res.status(200).json({ message: "Usuário deletado" });
   } catch (error) {
     res.status(500).json({ error: error.message });
+  }
+});
+
+app.get("/comentarios", async (req, res) => {
+  try {
+    const comentarios = await prisma.comentario.findMany({
+      orderBy: { createdAt: "desc" }
+    });
+    res.status(200).json(comentarios);
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao buscar comentários" });
+  }
+});
+
+app.post("/comentarios", async (req, res) => {
+  const result = comentarioSchema.safeParse(req.body);
+  if (!result.success) return res.status(400).json({ errors: result.error.flatten().fieldErrors });
+
+  try {
+    const novo = await prisma.comentario.create({
+      data: { texto: result.data.texto }
+    });
+    res.status(201).json(novo);
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao criar comentário" });
   }
 });
 
