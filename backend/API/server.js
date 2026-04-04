@@ -9,20 +9,16 @@ import bcrypt from 'bcryptjs';
 const prisma = new PrismaClient();
 const app = express();
 
+const JWT_SECRET = process.env.JWT_SECRET || "segredo_dev";
+const PORT = process.env.PORT || 3000;
+
 // Configurar CORS
 app.use(cors({
-  origin: [
-    'http://localhost:5174',
-    'http://localhost:3000',
-    'https://fullstack-crud-pearl.vercel.app',
-    process.env.FRONTEND_URL
-  ],
+  origin: true,
   credentials: true
 }));
 
 app.use(express.json());
-
-const JWT_SECRET = process.env.JWT_SECRET || "segredo_dev";
 
 // ── Schemas de validação ──────────────────────────────────────
 const userSchema = z.object({
