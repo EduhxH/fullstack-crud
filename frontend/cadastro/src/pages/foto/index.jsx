@@ -5,24 +5,45 @@ import "./style.css";
 export default function Foto() {
   const [comentarios, setComentarios] = useState([]);
   const [texto, setTexto] = useState("");
+  const [enviando, setEnviando] = useState(false);
+  const [erro, setErro] = useState("");
 
   async function carregarComentarios() {
-    const res = await fetch("http://localhost:3000/comentarios");
-    const data = await res.json();
-    setComentarios(data);
+    try {
+      const res = await fetch("http://localhost:3000/comentarios");
+      if (!res.ok) throw new Error("Erro ao carregar comentários");
+      const data = await res.json();
+      setComentarios(data);
+    } catch (err) {
+      console.error("Erro ao carregar comentários:", err);
+    }
   }
 
   async function enviarComentario(e) {
     e.preventDefault();
 
-    await fetch("http://localhost:3000/comentarios", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ texto })
-    });
+    if (!texto.trim()) return;
 
-    setTexto("");
-    carregarComentarios();
+    setEnviando(true);
+    setErro("");
+
+    try {
+      const res = await fetch("http://localhost:3000/comentarios", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ texto }),
+      });
+
+      if (!res.ok) throw new Error("Erro ao enviar comentário");
+
+      setTexto("");
+      await carregarComentarios();
+    } catch (err) {
+      console.error("Erro ao enviar comentário:", err);
+      setErro("Não foi possível enviar o comentário. Tente novamente.");
+    } finally {
+      setEnviando(false);
+    }
   }
 
   useEffect(() => {
@@ -52,9 +73,14 @@ export default function Foto() {
             placeholder="Escreve um comentário..."
             value={texto}
             onChange={(e) => setTexto(e.target.value)}
+            disabled={enviando}
           />
-          <button type="submit">Enviar</button>
+          <button type="submit" disabled={enviando || !texto.trim()}>
+            {enviando ? "Enviando..." : "Enviar"}
+          </button>
         </form>
+
+        {erro && <p className="erro-comentario">{erro}</p>}
       </div>
     </div>
   );

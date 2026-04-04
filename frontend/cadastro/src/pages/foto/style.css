@@ -59,3 +59,14 @@
   color: white;
   cursor: pointer;
 }
+
+.erro-comentario {
+  color: #ff6b6b;
+  margin-top: 10px;
+  font-size: 0.9rem;
+}
+
+.form-comentario button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
