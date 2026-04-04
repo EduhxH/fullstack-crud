@@ -12,25 +12,11 @@ const app = express();
 const JWT_SECRET = process.env.JWT_SECRET || "segredo_dev";
 const PORT = process.env.PORT || 3000;
 
-console.log('Iniciando servidor...');
-console.log('JWT_SECRET:', JWT_SECRET ? 'Configurado' : 'Usando padrão');
-console.log('PORT:', PORT);
-console.log('NODE_ENV:', process.env.NODE_ENV);
-
 // Configurar CORS
 app.use(cors({
   origin: true,
   credentials: true
 }));
-
-// Timeout global para requisições (30 segundos)
-app.use((req, res, next) => {
-  res.setTimeout(30000, () => {
-    console.error('Requisição expirou (timeout):', req.method, req.path);
-    res.status(504).json({ error: 'Request timeout' });
-  });
-  next();
-});
 
 app.use(express.json());
 
@@ -78,63 +64,40 @@ app.get('/health', async (req, res) => {
 
 // Registar admin
 app.post('/auth/register', async (req, res) => {
-  console.log('POST /auth/register - Iniciando...');
   const result = authSchema.safeParse(req.body);
   if (!result.success) {
-    console.log('Validação falhou:', result.error);
     return res.status(400).json({ errors: result.error.flatten().fieldErrors });
   }
   try {
-    console.log('Consultando banco de dados...');
     const exists = await prisma.admin.findUnique({ where: { email: result.data.email } });
-    if (exists) {
-      console.log('Email já existe');
-      return res.status(400).json({ error: "Email já registado" });
-    }
+    if (exists) return res.status(400).json({ error: "Email já registado" });
 
-    console.log('Fazendo hash da senha...');
     const hashedPassword = await bcrypt.hash(result.data.password, 10);
-    console.log('Criando admin...');
     const admin = await prisma.admin.create({
       data: { email: result.data.email, password: hashedPassword }
     });
-    console.log('Admin criado com sucesso');
     res.status(201).json({ message: "Admin criado com sucesso", id: admin.id });
   } catch (error) {
-    console.error("Erro ao registar admin:", error);
     res.status(500).json({ error: error.message });
   }
 });
 
 // Login
 app.post('/auth/login', async (req, res) => {
-  console.log('POST /auth/login - Iniciando...');
   const result = authSchema.safeParse(req.body);
   if (!result.success) {
-    console.log('Validação falhou:', result.error);
     return res.status(400).json({ errors: result.error.flatten().fieldErrors });
   }
   try {
-    console.log('Procurando admin por email...');
     const admin = await prisma.admin.findUnique({ where: { email: result.data.email } });
-    if (!admin) {
-      console.log('Admin não encontrado');
-      return res.status(401).json({ error: "Credenciais inválidas" });
-    }
+    if (!admin) return res.status(401).json({ error: "Credenciais inválidas" });
 
-    console.log('Verificando password...');
     const validPassword = await bcrypt.compare(result.data.password, admin.password);
-    if (!validPassword) {
-      console.log('Password inválida');
-      return res.status(401).json({ error: "Credenciais inválidas" });
-    }
+    if (!validPassword) return res.status(401).json({ error: "Credenciais inválidas" });
 
-    console.log('Gerando JWT...');
     const token = jwt.sign({ id: admin.id }, JWT_SECRET, { expiresIn: '8h' });
-    console.log('Login bem-sucedido');
     res.status(200).json({ token });
   } catch (error) {
-    console.error("Erro ao fazer login:", error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -200,8 +163,6 @@ app.delete('/usuarios/:id', authMiddleware, async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
-
-const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
   console.log(`Servidor rodando em http://localhost:${PORT}`);
