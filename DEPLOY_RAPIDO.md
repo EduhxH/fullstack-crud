@@ -27,19 +27,29 @@ Seu repositório: **https://github.com/EduhxH/fullstack-crud**
 3. Cole: **https://github.com/EduhxH/fullstack-crud**
 4. Railway vai detectar que é Node.js
 
-### 2.3 Configurar variáveis de ambiente no Railway
+### 2.3 **IMPORTANTE: Configurar Monorepo**
+Precisa indicar qual pasta fazer o build:
+1. Na dashboard do Railway, vá para **"Settings"**
+2. Em **"Build Configuration"** configure:
+   - **Build Command**: `npm install && npx prisma generate`
+   - **Start Command**: `node server.js`
+   - **Root Directory**: `backend/API`
+3. Clique em **"Save"**
+
+### 2.4 Configurar variáveis de ambiente no Railway
 1. Na dashboard, vá para **"Variables"**
 2. Adicione:
    ```
    DATABASE_URL = (copie do seu .env)
-   JWT_SECRET = (gere uma senha segura)
+   JWT_SECRET = (gere uma senha segura com min 32 caracteres)
    NODE_ENV = production
    FRONTEND_URL = (será atualizado após o deploy da Vercel)
+   PORT = 3000
    ```
 
-### 2.4 Deploy automático
+### 2.5 Deploy automático
 - Railway vai fazer deploy automaticamente
-- Pegue a URL final: `https://seu-projeto.up.railway.app`
+- Pegue a URL final da aba **"Networking"**: `https://seu-projeto.up.railway.app`
 
 ---
 
