@@ -38,6 +38,8 @@ Built with a modern JavaScript stack focused on clean architecture and frontend-
 | Frontend consuming REST API via Axios | ✅ |
 | Persistent data with MongoDB Atlas | ✅ |
 | Deployed on Render | ✅ |
+| Photo gallery page | ✅ |
+| Public comment system | ✅ |
 
 ---
 
@@ -54,6 +56,8 @@ Built with a modern JavaScript stack focused on clean architecture and frontend-
 - 🗄️ **Prisma ORM** — type-safe database access with schema-first modeling
 - ☁️ **MongoDB Atlas** — cloud-hosted database, zero local setup required
 - 🚀 **Deployed on Render** — live backend available at all times
+- 🖼️ **Photo page** — a dedicated page featuring a photo gallery with a polished glassmorphism UI, built as a joke... but ended up being a great excuse to add more real features to the project
+- 💬 **Public comment system** — anyone can leave a comment on the photo page; comments are persisted in the database and loaded in real time, no authentication required
 
 ---
 
@@ -216,6 +220,25 @@ DELETE /usuarios/:id
 GET /health
 ```
 
+### Comments
+
+> These routes are **public** — no authentication required.
+
+#### Get all comments
+```http
+GET /comentarios
+```
+
+#### Post a comment
+```http
+POST /comentarios
+Content-Type: application/json
+
+{
+  "texto": "Your comment here"
+}
+```
+
 ---
 
 ## 📁 Project Structure
@@ -234,9 +257,10 @@ fullstack-crud/
 └── frontend/
     └── cadastro/
         ├── src/
-        │   ├── assets/             # Static assets
+        │   ├── assets/             # Static assets (including the photo 📸)
         │   ├── pages/
         │   │   ├── home/           # Main dashboard page
+        │   │   ├── foto/           # Photo gallery + comment system
         │   │   └── login/          # Login & register page
         │   ├── services/
         │   │   └── api.js          # Axios instance
@@ -259,6 +283,9 @@ fullstack-crud/
 - Handling async operations and error boundaries in both layers
 - Deploying a Node.js backend to Render with environment variables
 - Organizing a monorepo-style project and versioning it with Git
+- Debugging CORS issues between a Vercel frontend and a Render backend
+- Building public (unauthenticated) endpoints alongside protected routes
+- Creating a real-time comment system with persistent storage
 
 ---
 
